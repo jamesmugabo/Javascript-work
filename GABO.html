@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multi-Operation Calculator with Button</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #2980b9;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .calculator {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 1.5rem;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 1.4rem;
+  }
+  input[type="number"], button {
+    width: 100%;
+    padding: 0.6rem;
+    margin: 0.4rem 0 1rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+  }
+  input[type="number"] {
+    outline: none;
+  }
+  button {
+    background: #1abc9c;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #16a085;
+  }
+  .results {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    text-align: left;
+  }
+  .error {
+    margin-top: 1rem;
+    color: #e74c3c;
+    font-weight: 700;
+  }
+  .visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px,1px,1px,1px);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="calculator" role="main" aria-labelledby="calcTitle">
+    <h1 id="calcTitle">Multi-Operation Calculator</h1>
+    <label for="num1" class="visually-hidden">First Number</label>
+    <input type="number" id="num1" placeholder="Enter first number" autocomplete="off" />
+    <label for="num2" class="visually-hidden">Second Number</label>
+    <input type="number" id="num2" placeholder="Enter second number" autocomplete="off" />
+    <button id="showResultBtn" aria-label="Show calculation results">Show Result</button>
+    <div id="results" class="results" aria-live="polite" aria-atomic="true"></div>
+    <div id="error" class="error" role="alert"></div>
+  </div>
+
+  <script>
+    (function() {
+      const num1Input = document.getElementById('num1');
+      const num2Input = document.getElementById('num2');
+      const resultsDiv = document.getElementById('results');
+      const errorDiv = document.getElementById('error');
+      const showResultBtn = document.getElementById('showResultBtn');
+
+      function calculateOperations(a, b) {
+        return {
+          addition: a + b,
+          subtraction: a - b,
+          multiplication: a * b,
+          division: b === 0 ? 'Error: Division by zero' : (a / b),
+          remainder: b === 0 ? 'Error: Division by zero' : (a % b),
+        };
+      }
+
+      function showResults() {
+        errorDiv.textContent = '';
+        resultsDiv.textContent = '';
+
+        const val1 = parseFloat(num1Input.value);
+        const val2 = parseFloat(num2Input.value);
+
+        if(isNaN(val1) || isNaN(val2)) {
+          resultsDiv.textContent = '';
+          errorDiv.textContent = 'Please enter valid numbers in both fields.';
+          return;
+        }
+
+        const ops = calculateOperations(val1, val2);
+        const formatter = (val) => typeof val === 'number' ? val.toFixed(4).replace(/\.?0+$/,"") : val;
+
+        resultsDiv.innerHTML = `
+          Addition (+): <strong>${formatter(ops.addition)}</strong><br/>
+          Subtraction (-): <strong>${formatter(ops.subtraction)}</strong><br/>
+          Multiplication (×): <strong>${formatter(ops.multiplication)}</strong><br/>
+          Division (÷): <strong>${ops.division}</strong><br/>
+          Remainder (%): <strong>${ops.remainder}</strong>
+        `;
+      }
+
+      showResultBtn.addEventListener('click', showResults);
+    })();
+  </script>
+</body>
+</html>
